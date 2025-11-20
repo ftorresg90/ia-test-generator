@@ -5,7 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class TC-001Page extends WebBasePage {
+public class LoginPositivoPage extends WebBasePage {
     private static WebDriver driver;
 
     @FindBy(id = "username")
@@ -20,9 +20,9 @@ public class TC-001Page extends WebBasePage {
     @FindBy(css = "div[data-test='resultado-4']")
     private WebElement validardashboardprincipal;
 
-    public TC-001Page(WebDriver driver) {
+    public LoginPositivoPage(WebDriver driver) {
         super(driver);
-        TC-001Page.driver = driver;
+        LoginPositivoPage.driver = driver;
         PageFactory.initElements(driver, this);
     }
 

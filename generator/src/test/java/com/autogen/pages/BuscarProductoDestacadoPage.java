@@ -5,7 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class TC-010Page extends WebBasePage {
+public class BuscarProductoDestacadoPage extends WebBasePage {
     private static WebDriver driver;
 
     @FindBy(css = "[data-test='step-1']")
@@ -17,9 +17,9 @@ public class TC-010Page extends WebBasePage {
     @FindBy(css = "div[data-test='resultado-3']")
     private WebElement validarresultados;
 
-    public TC-010Page(WebDriver driver) {
+    public BuscarProductoDestacadoPage(WebDriver driver) {
         super(driver);
-        TC-010Page.driver = driver;
+        BuscarProductoDestacadoPage.driver = driver;
         PageFactory.initElements(driver, this);
     }
 

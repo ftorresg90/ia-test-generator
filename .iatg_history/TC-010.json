@@ -33,12 +33,12 @@
   "stepDefinitions": [
     {
       "stepText": "Navegar a la home",
-      "glueClass": "com.autogen.steps.TC-010Steps",
+      "glueClass": "com.autogen.steps.BuscarProductoDestacadoSteps",
       "methodName": "step1",
       "parameters": [],
       "body": null,
       "action": {
-        "pageObjectClass": "com.autogen.pages.TC-010Page",
+        "pageObjectClass": "com.autogen.pages.BuscarProductoDestacadoPage",
         "baseName": "navegarALaHome",
         "interaction": "click"
       },
@@ -46,14 +46,14 @@
     },
     {
       "stepText": "Buscar \"(.*)\"",
-      "glueClass": "com.autogen.steps.TC-010Steps",
+      "glueClass": "com.autogen.steps.BuscarProductoDestacadoSteps",
       "methodName": "step2",
       "parameters": [
         "String param1"
       ],
       "body": null,
       "action": {
-        "pageObjectClass": "com.autogen.pages.TC-010Page",
+        "pageObjectClass": "com.autogen.pages.BuscarProductoDestacadoPage",
         "baseName": "buscarCamiseta",
         "interaction": "input"
       },
@@ -61,12 +61,12 @@
     },
     {
       "stepText": "Validar resultados",
-      "glueClass": "com.autogen.steps.TC-010Steps",
+      "glueClass": "com.autogen.steps.BuscarProductoDestacadoSteps",
       "methodName": "step3",
       "parameters": [],
       "body": null,
       "action": {
-        "pageObjectClass": "com.autogen.pages.TC-010Page",
+        "pageObjectClass": "com.autogen.pages.BuscarProductoDestacadoPage",
         "baseName": "validarResultados",
         "interaction": "assertVisible"
       },
@@ -75,7 +75,7 @@
   ],
   "pageObjects": [
     {
-      "className": "com.autogen.pages.TC-010Page",
+      "className": "com.autogen.pages.BuscarProductoDestacadoPage",
       "methods": [
         {
           "name": "navegarALaHome",

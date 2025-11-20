@@ -43,14 +43,14 @@
   "stepDefinitions": [
     {
       "stepText": "Ingresar usuario \"(.*)\"",
-      "glueClass": "com.autogen.steps.TC-001Steps",
+      "glueClass": "com.autogen.steps.LoginPositivoSteps",
       "methodName": "step1",
       "parameters": [
         "String param1"
       ],
       "body": null,
       "action": {
-        "pageObjectClass": "com.autogen.pages.TC-001Page",
+        "pageObjectClass": "com.autogen.pages.LoginPositivoPage",
         "baseName": "ingresarUsuarioQaUser",
         "interaction": "input"
       },
@@ -58,14 +58,14 @@
     },
     {
       "stepText": "Ingresar password \"(.*)\"",
-      "glueClass": "com.autogen.steps.TC-001Steps",
+      "glueClass": "com.autogen.steps.LoginPositivoSteps",
       "methodName": "step2",
       "parameters": [
         "String param1"
       ],
       "body": null,
       "action": {
-        "pageObjectClass": "com.autogen.pages.TC-001Page",
+        "pageObjectClass": "com.autogen.pages.LoginPositivoPage",
         "baseName": "ingresarPassword1234",
         "interaction": "input"
       },
@@ -73,12 +73,12 @@
     },
     {
       "stepText": "Presionar Ingresar",
-      "glueClass": "com.autogen.steps.TC-001Steps",
+      "glueClass": "com.autogen.steps.LoginPositivoSteps",
       "methodName": "step3",
       "parameters": [],
       "body": null,
       "action": {
-        "pageObjectClass": "com.autogen.pages.TC-001Page",
+        "pageObjectClass": "com.autogen.pages.LoginPositivoPage",
         "baseName": "presionarIngresar",
         "interaction": "click"
       },
@@ -86,12 +86,12 @@
     },
     {
       "stepText": "Validar dashboard principal",
-      "glueClass": "com.autogen.steps.TC-001Steps",
+      "glueClass": "com.autogen.steps.LoginPositivoSteps",
       "methodName": "step4",
       "parameters": [],
       "body": null,
       "action": {
-        "pageObjectClass": "com.autogen.pages.TC-001Page",
+        "pageObjectClass": "com.autogen.pages.LoginPositivoPage",
         "baseName": "validarDashboardPrincipal",
         "interaction": "assertVisible"
       },
@@ -100,7 +100,7 @@
   ],
   "pageObjects": [
     {
-      "className": "com.autogen.pages.TC-001Page",
+      "className": "com.autogen.pages.LoginPositivoPage",
       "methods": [
         {
           "name": "ingresarUsuarioQaUser",

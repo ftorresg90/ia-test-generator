@@ -1,3 +1,13 @@
+# Login positivo
+id: TC-001
+url: https://qa.miapp.com/login
+tags: @smoke @login
+pasos:
+1. Ingresar usuario "qa_user"
+2. Ingresar password "1234"
+3. Presionar Ingresar
+4. Validar dashboard principal
+
 # Buscar producto destacado
 id: TC-010
 url: https://tienda.ejemplo.com

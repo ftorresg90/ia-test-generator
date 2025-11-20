@@ -9,6 +9,13 @@ def to_camel(text: str) -> str:
     return first.lower() + ''.join(segment.capitalize() for segment in rest)
 
 
+def to_pascal(text: str) -> str:
+    segments = re.findall(r"[a-z0-9]+", text, re.I)
+    if not segments:
+        return "Case"
+    return ''.join(segment.capitalize() for segment in segments)
+
+
 def detect_parameters(text: str):
     return re.findall(r'"([^\"]+)"', text)
 
@@ -33,7 +40,8 @@ def detect_interaction(text: str, has_params: bool):
 
 def buildContract(test_case: dict):
     steps = test_case.get("steps", [])
-    page_class = f"com.autogen.pages.{test_case.get('id', 'Case')}Page"
+    class_base = to_pascal(test_case.get("title") or test_case.get("id") or "Case")
+    page_class = f"com.autogen.pages.{class_base}Page"
     notes = []
     seen = {}
     for text in steps:
@@ -85,7 +93,7 @@ def buildContract(test_case: dict):
         base_name = to_camel(text)
         contracts["stepDefinitions"].append({
             "stepText": regex_text,
-            "glueClass": f"com.autogen.steps.{test_case.get('id', 'Case')}Steps",
+            "glueClass": f"com.autogen.steps.{class_base}Steps",
             "methodName": f"step{idx + 1}",
             "parameters": [f"String param{i + 1}" for i in range(len(params))],
             "body": None,

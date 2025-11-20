@@ -50,7 +50,9 @@ def write_features(contracts, output_dir):
     feature_dir = Path(output_dir) / 'test/resources/features'
     feature_dir.mkdir(parents=True, exist_ok=True)
     for idx, contract in enumerate(contracts):
-        slug = slugify(contract['meta']['caseId']) or f"feature-{idx + 1}"
+        meta = contract.get('meta', {})
+        preferred_name = meta.get('title') or meta.get('caseId') or f"feature-{idx + 1}"
+        slug = slugify(preferred_name) or f"feature-{idx + 1}"
         write_file(feature_dir / f"{slug}.feature", render_feature(contract, idx))
 
 

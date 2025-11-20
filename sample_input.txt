@@ -1,0 +1,7 @@
+# Buscar producto destacado
+id: TC-010
+url: https://tienda.ejemplo.com
+pasos:
+- Navegar a la home
+- Buscar "camiseta"
+- Validar resultados

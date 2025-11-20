@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["meta", "gherkin", "stepDefinitions", "pageObjects"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["caseId", "title"],
+      "properties": {
+        "caseId": { "type": "string" },
+        "title": { "type": "string" },
+        "url": { "type": ["string", "null"] },
+        "tags": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "gherkin": {
+      "type": "object",
+      "required": ["featureName", "scenarios"],
+      "properties": {
+        "featureName": { "type": "string" },
+        "featureDescription": { "type": "string" },
+        "background": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "scenarios": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "steps"],
+            "properties": {
+              "name": { "type": "string" },
+              "tags": { "type": "array", "items": { "type": "string" }, "default": [] },
+              "steps": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["keyword", "text"],
+                  "properties": {
+                    "keyword": { "type": "string" },
+                    "text": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "stepDefinitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["stepText", "glueClass", "methodName"],
+        "properties": {
+          "stepText": { "type": "string" },
+          "glueClass": { "type": "string" },
+          "methodName": { "type": "string" },
+          "parameters": { "type": "array", "items": { "type": "string" }, "default": [] },
+          "body": { "type": ["string", "null"], "default": null },
+          "action": {
+            "type": ["object", "null"],
+            "properties": {
+              "pageObjectClass": { "type": "string" },
+              "baseName": { "type": "string" },
+              "interaction": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "pageObjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["className", "methods"],
+        "properties": {
+          "className": { "type": "string" },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "locator"],
+              "properties": {
+                "name": { "type": "string" },
+                "type": { "type": "string", "default": "action" },
+                "parameters": { "type": "array", "items": { "type": "string" }, "default": [] },
+                "body": { "type": ["string", "null"], "default": null },
+                "locator": {
+                  "type": "object",
+                  "required": ["strategy", "value"],
+                  "properties": {
+                    "strategy": { "type": "string" },
+                    "value": { "type": "string" },
+                    "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" }, "default": [] }
+  }
+}

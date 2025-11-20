@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "caseId": "TC-001",
+    "title": "Login positivo",
+    "url": "https://qa.miapp.com/login",
+    "tags": [
+      "@smoke",
+      "@login"
+    ]
+  },
+  "gherkin": {
+    "featureName": "Login positivo",
+    "featureDescription": "Feature generado para Login positivo",
+    "background": [],
+    "scenarios": [
+      {
+        "name": "Login positivo",
+        "tags": [
+          "@smoke",
+          "@login"
+        ],
+        "steps": [
+          {
+            "keyword": "Given",
+            "text": "Ingresar usuario \"qa_user\""
+          },
+          {
+            "keyword": "When",
+            "text": "Ingresar password \"1234\""
+          },
+          {
+            "keyword": "When",
+            "text": "Presionar Ingresar"
+          },
+          {
+            "keyword": "Then",
+            "text": "Validar dashboard principal"
+          }
+        ]
+      }
+    ]
+  },
+  "stepDefinitions": [
+    {
+      "stepText": "Ingresar usuario \"(.*)\"",
+      "glueClass": "com.autogen.steps.TC-001Steps",
+      "methodName": "step1",
+      "parameters": [
+        "String param1"
+      ],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.TC-001Page",
+        "baseName": "ingresarUsuarioQaUser",
+        "interaction": "input"
+      },
+      "reusesExisting": false
+    },
+    {
+      "stepText": "Ingresar password \"(.*)\"",
+      "glueClass": "com.autogen.steps.TC-001Steps",
+      "methodName": "step2",
+      "parameters": [
+        "String param1"
+      ],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.TC-001Page",
+        "baseName": "ingresarPassword1234",
+        "interaction": "input"
+      },
+      "reusesExisting": false
+    },
+    {
+      "stepText": "Presionar Ingresar",
+      "glueClass": "com.autogen.steps.TC-001Steps",
+      "methodName": "step3",
+      "parameters": [],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.TC-001Page",
+        "baseName": "presionarIngresar",
+        "interaction": "click"
+      },
+      "reusesExisting": false
+    },
+    {
+      "stepText": "Validar dashboard principal",
+      "glueClass": "com.autogen.steps.TC-001Steps",
+      "methodName": "step4",
+      "parameters": [],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.TC-001Page",
+        "baseName": "validarDashboardPrincipal",
+        "interaction": "assertVisible"
+      },
+      "reusesExisting": false
+    }
+  ],
+  "pageObjects": [
+    {
+      "className": "com.autogen.pages.TC-001Page",
+      "methods": [
+        {
+          "name": "ingresarUsuarioQaUser",
+          "locator": {
+            "strategy": "id",
+            "value": "username",
+            "confidence": 0.85
+          }
+        },
+        {
+          "name": "ingresarPassword1234",
+          "locator": {
+            "strategy": "id",
+            "value": "password",
+            "confidence": 0.85
+          }
+        },
+        {
+          "name": "presionarIngresar",
+          "locator": {
+            "strategy": "css",
+            "value": "[data-test='step-3']",
+            "confidence": 0.3
+          }
+        },
+        {
+          "name": "validarDashboardPrincipal",
+          "locator": {
+            "strategy": "css",
+            "value": "div[data-test='resultado-4']",
+            "confidence": 0.6
+          }
+        }
+      ]
+    }
+  ],
+  "notes": []
+}

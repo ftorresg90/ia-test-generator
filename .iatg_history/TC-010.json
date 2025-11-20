@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "caseId": "TC-010",
+    "title": "Buscar producto destacado",
+    "url": "https://tienda.ejemplo.com",
+    "tags": []
+  },
+  "gherkin": {
+    "featureName": "Buscar producto destacado",
+    "featureDescription": "Feature generado para Buscar producto destacado",
+    "background": [],
+    "scenarios": [
+      {
+        "name": "Buscar producto destacado",
+        "tags": [],
+        "steps": [
+          {
+            "keyword": "Given",
+            "text": "Navegar a la home"
+          },
+          {
+            "keyword": "When",
+            "text": "Buscar \"camiseta\""
+          },
+          {
+            "keyword": "Then",
+            "text": "Validar resultados"
+          }
+        ]
+      }
+    ]
+  },
+  "stepDefinitions": [
+    {
+      "stepText": "Navegar a la home",
+      "glueClass": "com.autogen.steps.TC-010Steps",
+      "methodName": "step1",
+      "parameters": [],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.TC-010Page",
+        "baseName": "navegarALaHome",
+        "interaction": "click"
+      },
+      "reusesExisting": false
+    },
+    {
+      "stepText": "Buscar \"(.*)\"",
+      "glueClass": "com.autogen.steps.TC-010Steps",
+      "methodName": "step2",
+      "parameters": [
+        "String param1"
+      ],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.TC-010Page",
+        "baseName": "buscarCamiseta",
+        "interaction": "input"
+      },
+      "reusesExisting": false
+    },
+    {
+      "stepText": "Validar resultados",
+      "glueClass": "com.autogen.steps.TC-010Steps",
+      "methodName": "step3",
+      "parameters": [],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.TC-010Page",
+        "baseName": "validarResultados",
+        "interaction": "assertVisible"
+      },
+      "reusesExisting": false
+    }
+  ],
+  "pageObjects": [
+    {
+      "className": "com.autogen.pages.TC-010Page",
+      "methods": [
+        {
+          "name": "navegarALaHome",
+          "locator": {
+            "strategy": "css",
+            "value": "[data-test='step-1']",
+            "confidence": 0.3
+          }
+        },
+        {
+          "name": "buscarCamiseta",
+          "locator": {
+            "strategy": "css",
+            "value": "input[type='search']",
+            "confidence": 0.7
+          }
+        },
+        {
+          "name": "validarResultados",
+          "locator": {
+            "strategy": "css",
+            "value": "div[data-test='resultado-3']",
+            "confidence": 0.6
+          }
+        }
+      ]
+    }
+  ],
+  "notes": []
+}

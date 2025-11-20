@@ -14,6 +14,20 @@ HOOKS_PACKAGE = 'com.autogen.hooks'
 RUNNER_PACKAGE = 'com.autogen.runners'
 
 
+def compute_step_keywords(count: int):
+    if count <= 0:
+        return []
+    if count == 1:
+        return ['Given']
+    if count == 2:
+        return ['Given', 'Then']
+    keywords = ['Given', 'When']
+    if count > 3:
+        keywords.extend(['And'] * (count - 3))
+    keywords.append('Then')
+    return keywords
+
+
 def indent(body: str, spaces: int = 8) -> str:
     pad = ' ' * spaces
     return '\n'.join(f"{pad}{line.rstrip()}" for line in body.split('\n'))
@@ -40,8 +54,11 @@ def render_feature(contract, index):
         if scenario.get('tags'):
             lines.append('  ' + ' '.join(scenario['tags']))
         lines.append(f"  Scenario: {scenario.get('name', f'Escenario {index + 1}')}")
-        for step in scenario.get('steps', []):
-            lines.append(f"    {step.get('keyword', 'When')} {step.get('text', '')}")
+        steps = scenario.get('steps', [])
+        keyword_flow = compute_step_keywords(len(steps))
+        for idx, step in enumerate(steps):
+            keyword = keyword_flow[idx] if idx < len(keyword_flow) else step.get('keyword', 'When')
+            lines.append(f"    {keyword} {step.get('text', '')}")
     lines.append('')
     return '\n'.join(lines)
 
@@ -91,9 +108,12 @@ def normalize_step_text(text: str) -> str:
 def build_keyword_map(contract):
     mapping = {}
     for scenario in contract.get('gherkin', {}).get('scenarios', []):
-        for step in scenario.get('steps', []):
+        steps = scenario.get('steps', [])
+        keyword_flow = compute_step_keywords(len(steps))
+        for idx, step in enumerate(steps):
             normalized = normalize_step_text(step.get('text', ''))
-            mapping.setdefault(normalized, step.get('keyword', 'When'))
+            keyword = keyword_flow[idx] if idx < len(keyword_flow) else step.get('keyword', 'When')
+            mapping.setdefault(normalized, keyword)
     return mapping
 
 

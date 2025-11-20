@@ -25,7 +25,7 @@ public class LoginPositivoSteps {
         loginpositivopage.ingresarpassword1234SendKeys(param1);
     }
 
-    @When("Presionar Ingresar")
+    @And("Presionar Ingresar")
     public void presionarIngresar() {
         loginpositivopage.presionaringresarClick();
     }

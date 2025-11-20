@@ -5,5 +5,5 @@ Feature: Login positivo
   Scenario: Login positivo
     Given Ingresar usuario "qa_user"
     When Ingresar password "1234"
-    When Presionar Ingresar
+    And Presionar Ingresar
     Then Validar dashboard principal

@@ -1,0 +1,34 @@
+[
+  {
+    "caseId": "TC-020",
+    "url": "https://www.mercadolibre.cl",
+    "steps": [
+      {
+        "text": "Navegar a Mercado Libre \"https://www.mercadolibre.cl\"",
+        "action": "click",
+        "locator": null,
+        "confidence": 0.0,
+        "tokens": [
+          "www"
+        ],
+        "note": "No se encontró un elemento adecuado."
+      },
+      {
+        "text": "Buscar el producto \"camiseta de futbol\"",
+        "action": "search",
+        "locator": null,
+        "confidence": 0.0,
+        "tokens": [],
+        "note": "No se encontró un elemento adecuado."
+      },
+      {
+        "text": "Validar resultados en Mercado Libre",
+        "action": "assert",
+        "locator": null,
+        "confidence": 0.0,
+        "tokens": [],
+        "note": "No se encontró un elemento adecuado."
+      }
+    ]
+  }
+]

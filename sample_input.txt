@@ -1,17 +1,18 @@
-# Login positivo
-id: TC-001
-url: https://qa.miapp.com/login
-tags: @smoke @login
-pasos:
-1. Ingresar usuario "qa_user"
-2. Ingresar password "1234"
-3. Presionar Ingresar
-4. Validar dashboard principal
 
-# Buscar producto destacado
-id: TC-010
-url: https://tienda.ejemplo.com
+# Busqueda Mercado Libre filtro camisetas
+id: TC-01
+url: https://www.mercadolibre.cl
 pasos:
-- Navegar a la home
-- Buscar "camiseta"
-- Validar resultados
+- Navegar a Mercado Libre "https://www.mercadolibre.cl"
+- Buscar el producto "camiseta de futbol"
+- Validar resultados en Mercado Libre
+
+
+# Búsqueda Mercado Libre seleccionar registros
+id: TC-02
+url: https://www.mercadolibre.cl
+pasos:
+- Navegar a Mercado Libre "https://www.mercadolibre.cl"
+- Buscar el producto "zapatos de futbol"
+- Validar resultados en Mercado Libre
+- selecciono el primer registro del listado

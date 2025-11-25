@@ -1,0 +1,112 @@
+{
+  "global": [
+    {
+      "pattern": "(?i)ingresar usuario|email|correo",
+      "locator": {
+        "strategy": "css",
+        "value": "input#username, input[name='username'], input[name='email'], input[type='email'], input[name='user']"
+      }
+    },
+    {
+      "pattern": "(?i)ingresar password|clave|contrase",
+      "locator": {
+        "strategy": "css",
+        "value": "input#password, input[type='password'], input[name='password'], input[name='pass']"
+      }
+    },
+    {
+      "pattern": "(?i)presionar (ingresar|entrar|login|iniciar)",
+      "locator": {
+        "strategy": "css",
+        "value": "button[type='submit'], button[name='login'], input[type='submit'], button[class*='login']"
+      }
+    },
+    {
+      "pattern": "(?i)buscar",
+      "locator": {
+        "strategy": "css",
+        "value": "input[type='search'], input[name='q'], input[name='search'], input[placeholder*='buscar' i], input[aria-label*='buscar' i]"
+      }
+    },
+    {
+      "pattern": "(?i)validar resultados",
+      "locator": {
+        "strategy": "css",
+        "value": "[data-testid*='result'], .result, .results-list li, .product-list li"
+      }
+    }
+  ],
+  "domains": {
+    "qa.miapp.com": [
+      {
+        "pattern": "(?i)ingresar usuario",
+        "locator": {
+          "strategy": "css",
+          "value": "#username, input[name='username']"
+        }
+      },
+      {
+        "pattern": "(?i)ingresar password",
+        "locator": {
+          "strategy": "css",
+          "value": "#password, input[name='password']"
+        }
+      },
+      {
+        "pattern": "(?i)dashboard",
+        "locator": {
+          "strategy": "css",
+          "value": "[data-test='dashboard'], .dashboard, main[role='main']"
+        }
+      }
+    ],
+    "tienda.ejemplo.com": [
+      {
+        "pattern": "(?i)buscar",
+        "locator": {
+          "strategy": "css",
+          "value": "input[name='search'], input[type='search']"
+        }
+      },
+      {
+        "pattern": "(?i)validar resultados",
+        "locator": {
+          "strategy": "css",
+          "value": ".product-card, .search-results li, .results-grid li"
+        }
+      }
+    ],
+    "www.mercadolibre.cl": [
+      {
+        "pattern": "(?i)buscar",
+        "locator": {
+          "strategy": "css",
+          "value": "input[id='cb1-edit'], input[name='as_word'], input[name='q']"
+        }
+      },
+      {
+        "pattern": "(?i)validar resultados",
+        "locator": {
+          "strategy": "css",
+          "value": "ol.ui-search-layout li.ui-search-layout__item, .shops__result-card"
+        }
+      }
+    ],
+    "mercadolibre.cl": [
+      {
+        "pattern": "(?i)buscar",
+        "locator": {
+          "strategy": "css",
+          "value": "input[id='cb1-edit'], input[name='as_word'], input[name='q']"
+        }
+      },
+      {
+        "pattern": "(?i)validar resultados",
+        "locator": {
+          "strategy": "css",
+          "value": "ol.ui-search-layout li.ui-search-layout__item, .shops__result-card"
+        }
+      }
+    ]
+  }
+}

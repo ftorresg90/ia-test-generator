@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "caseId": "TC-01",
+    "title": "Busqueda Mercado Libre filtro camisetas",
+    "url": "https://www.mercadolibre.cl",
+    "tags": []
+  },
+  "gherkin": {
+    "featureName": "Busqueda Mercado Libre filtro camisetas",
+    "featureDescription": "Feature generado para Busqueda Mercado Libre filtro camisetas",
+    "background": [],
+    "scenarios": [
+      {
+        "name": "Busqueda Mercado Libre filtro camisetas",
+        "tags": [],
+        "steps": [
+          {
+            "keyword": "Given",
+            "text": "Navegar a Mercado Libre \"https://www.mercadolibre.cl\""
+          },
+          {
+            "keyword": "When",
+            "text": "Buscar el producto \"camiseta de futbol\""
+          },
+          {
+            "keyword": "Then",
+            "text": "Validar resultados en Mercado Libre"
+          }
+        ]
+      }
+    ]
+  },
+  "stepDefinitions": [
+    {
+      "stepText": "Navegar a Mercado Libre \"(.*)\"",
+      "glueClass": "com.autogen.steps.BusquedaMercadoLibreFiltroCamisetasSteps",
+      "methodName": "navegarAMercadoLibreHttpsWwwMercadolibreCl",
+      "parameters": [
+        "String param1"
+      ],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.BusquedaMercadoLibreFiltroCamisetasPage",
+        "baseName": "navegarAMercadoLibreHttpsWwwMercadolibreCl",
+        "interaction": "input"
+      },
+      "reusesExisting": false
+    },
+    {
+      "stepText": "Buscar el producto \"(.*)\"",
+      "glueClass": "com.autogen.steps.BusquedaMercadoLibreFiltroCamisetasSteps",
+      "methodName": "buscarElProductoCamisetaDeFutbol",
+      "parameters": [
+        "String param1"
+      ],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.BusquedaMercadoLibreFiltroCamisetasPage",
+        "baseName": "buscarElProductoCamisetaDeFutbol",
+        "interaction": "input"
+      },
+      "reusesExisting": false
+    },
+    {
+      "stepText": "Validar resultados en Mercado Libre",
+      "glueClass": "com.autogen.steps.BusquedaMercadoLibreFiltroCamisetasSteps",
+      "methodName": "validarResultadosEnMercadoLibre",
+      "parameters": [],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.BusquedaMercadoLibreFiltroCamisetasPage",
+        "baseName": "validarResultadosEnMercadoLibre",
+        "interaction": "assertVisible"
+      },
+      "reusesExisting": false
+    }
+  ],
+  "pageObjects": [
+    {
+      "className": "com.autogen.pages.BusquedaMercadoLibreFiltroCamisetasPage",
+      "methods": [
+        {
+          "name": "navegarAMercadoLibreHttpsWwwMercadolibreCl",
+          "locator": {
+            "strategy": "css",
+            "value": "[data-test='step-1']",
+            "confidence": 0.3
+          }
+        },
+        {
+          "name": "buscarElProductoCamisetaDeFutbol",
+          "locator": {
+            "strategy": "css",
+            "value": "input[id='cb1-edit'], input[name='as_word'], input[name='q']"
+          }
+        },
+        {
+          "name": "validarResultadosEnMercadoLibre",
+          "locator": {
+            "strategy": "css",
+            "value": "ol.ui-search-layout li.ui-search-layout__item, .shops__result-card"
+          }
+        }
+      ]
+    }
+  ],
+  "notes": []
+}

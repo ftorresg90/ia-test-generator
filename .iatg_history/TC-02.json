@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "caseId": "TC-02",
+    "title": "Búsqueda Mercado Libre seleccionar registros",
+    "url": "https://www.mercadolibre.cl",
+    "tags": []
+  },
+  "gherkin": {
+    "featureName": "Búsqueda Mercado Libre seleccionar registros",
+    "featureDescription": "Feature generado para Búsqueda Mercado Libre seleccionar registros",
+    "background": [],
+    "scenarios": [
+      {
+        "name": "Búsqueda Mercado Libre seleccionar registros",
+        "tags": [],
+        "steps": [
+          {
+            "keyword": "Given",
+            "text": "Navegar a Mercado Libre \"https://www.mercadolibre.cl\""
+          },
+          {
+            "keyword": "When",
+            "text": "Buscar el producto \"zapatos de futbol\""
+          },
+          {
+            "keyword": "When",
+            "text": "Validar resultados en Mercado Libre"
+          },
+          {
+            "keyword": "Then",
+            "text": "selecciono el primer registro del listado"
+          }
+        ]
+      }
+    ]
+  },
+  "stepDefinitions": [
+    {
+      "stepText": "Navegar a Mercado Libre \"(.*)\"",
+      "glueClass": "com.autogen.steps.BusquedaMercadoLibreFiltroCamisetasSteps",
+      "methodName": "navegarAMercadoLibreHttpsWwwMercadolibreCl",
+      "parameters": [
+        "String param1"
+      ],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.BSquedaMercadoLibreSeleccionarRegistrosPage",
+        "baseName": "navegarAMercadoLibreHttpsWwwMercadolibreCl",
+        "interaction": "input"
+      },
+      "reusesExisting": true
+    },
+    {
+      "stepText": "Buscar el producto \"(.*)\"",
+      "glueClass": "com.autogen.steps.BusquedaMercadoLibreFiltroCamisetasSteps",
+      "methodName": "buscarElProductoCamisetaDeFutbol",
+      "parameters": [
+        "String param1"
+      ],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.BSquedaMercadoLibreSeleccionarRegistrosPage",
+        "baseName": "buscarElProductoZapatosDeFutbol",
+        "interaction": "input"
+      },
+      "reusesExisting": true
+    },
+    {
+      "stepText": "Validar resultados en Mercado Libre",
+      "glueClass": "com.autogen.steps.BusquedaMercadoLibreFiltroCamisetasSteps",
+      "methodName": "validarResultadosEnMercadoLibre",
+      "parameters": [],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.BSquedaMercadoLibreSeleccionarRegistrosPage",
+        "baseName": "validarResultadosEnMercadoLibre",
+        "interaction": "assertVisible"
+      },
+      "reusesExisting": true
+    },
+    {
+      "stepText": "selecciono el primer registro del listado",
+      "glueClass": "com.autogen.steps.BSquedaMercadoLibreSeleccionarRegistrosSteps",
+      "methodName": "seleccionoElPrimerRegistroDelListado",
+      "parameters": [],
+      "body": null,
+      "action": {
+        "pageObjectClass": "com.autogen.pages.BSquedaMercadoLibreSeleccionarRegistrosPage",
+        "baseName": "seleccionoElPrimerRegistroDelListado",
+        "interaction": "click"
+      },
+      "reusesExisting": false
+    }
+  ],
+  "pageObjects": [
+    {
+      "className": "com.autogen.pages.BSquedaMercadoLibreSeleccionarRegistrosPage",
+      "methods": [
+        {
+          "name": "navegarAMercadoLibreHttpsWwwMercadolibreCl",
+          "locator": {
+            "strategy": "css",
+            "value": "[data-test='step-1']",
+            "confidence": 0.3
+          }
+        },
+        {
+          "name": "buscarElProductoZapatosDeFutbol",
+          "locator": {
+            "strategy": "css",
+            "value": "input[id='cb1-edit'], input[name='as_word'], input[name='q']"
+          }
+        },
+        {
+          "name": "validarResultadosEnMercadoLibre",
+          "locator": {
+            "strategy": "css",
+            "value": "ol.ui-search-layout li.ui-search-layout__item, .shops__result-card"
+          }
+        },
+        {
+          "name": "seleccionoElPrimerRegistroDelListado",
+          "locator": {
+            "strategy": "css",
+            "value": "[data-test='step-4']",
+            "confidence": 0.3
+          }
+        }
+      ]
+    }
+  ],
+  "notes": []
+}

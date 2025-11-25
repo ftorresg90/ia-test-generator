@@ -34,7 +34,7 @@
     {
       "stepText": "Navegar a la home",
       "glueClass": "com.autogen.steps.BuscarProductoDestacadoSteps",
-      "methodName": "step1",
+      "methodName": "navegarALaHome",
       "parameters": [],
       "body": null,
       "action": {
@@ -47,7 +47,7 @@
     {
       "stepText": "Buscar \"(.*)\"",
       "glueClass": "com.autogen.steps.BuscarProductoDestacadoSteps",
-      "methodName": "step2",
+      "methodName": "buscarCamiseta",
       "parameters": [
         "String param1"
       ],
@@ -62,7 +62,7 @@
     {
       "stepText": "Validar resultados",
       "glueClass": "com.autogen.steps.BuscarProductoDestacadoSteps",
-      "methodName": "step3",
+      "methodName": "validarResultados",
       "parameters": [],
       "body": null,
       "action": {

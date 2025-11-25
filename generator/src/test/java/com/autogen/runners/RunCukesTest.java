@@ -6,7 +6,7 @@ import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "src/test/resources/features",
+        features = "generator/src/test/resources/features",
         glue = {"com.autogen.steps", "com.autogen.hooks"},
         plugin = "pretty",
         monochrome = true

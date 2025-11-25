@@ -1,4 +1,16 @@
+import json
 import re
+from pathlib import Path
+from urllib.parse import urlparse
+
+GLOBAL_STEP_REGISTRY = {}
+LOCATOR_HINTS_PATH = Path(__file__).with_name("locator_hints.json")
+try:
+    LOCATOR_HINTS = json.loads(LOCATOR_HINTS_PATH.read_text(encoding="utf-8"))
+except FileNotFoundError:
+    LOCATOR_HINTS = {"global": [], "domains": {}}
+except json.JSONDecodeError:
+    LOCATOR_HINTS = {"global": [], "domains": {}}
 
 
 def to_camel(text: str) -> str:
@@ -20,7 +32,43 @@ def detect_parameters(text: str):
     return re.findall(r'"([^\"]+)"', text)
 
 
-def suggest_locator(text: str, idx: int):
+def iter_domain_keys(url: str | None):
+    if not url:
+        return []
+    host = urlparse(url).hostname
+    if not host:
+        return []
+    host = host.lower()
+    keys = [host]
+    if host.startswith("www."):
+        keys.append(host[4:])
+    parts = host.split('.')
+    if len(parts) > 2:
+        keys.append('.'.join(parts[-2:]))
+    return keys
+
+
+def match_locator_hint(text: str, url: str | None):
+    normalized = normalize_step(text)
+    domains = LOCATOR_HINTS.get("domains", {})
+    for key in iter_domain_keys(url):
+        for hint in domains.get(key, []):
+            pattern = hint.get("pattern")
+            locator = hint.get("locator")
+            if pattern and locator and re.search(pattern, normalized, re.I):
+                return locator
+    for hint in LOCATOR_HINTS.get("global", []):
+        pattern = hint.get("pattern")
+        locator = hint.get("locator")
+        if pattern and locator and re.search(pattern, normalized, re.I):
+            return locator
+    return None
+
+
+def suggest_locator(text: str, idx: int, url: str | None):
+    hint = match_locator_hint(text, url)
+    if hint:
+        return hint
     if re.search(r"usuario|user", text, re.I):
         return {"strategy": "id", "value": "username", "confidence": 0.85}
     if re.search(r"password|clave", text, re.I):
@@ -36,6 +84,14 @@ def detect_interaction(text: str, has_params: bool):
     if re.search(r"validar|verificar|asegurar", text, re.I):
         return "assertText" if has_params else "assertVisible"
     return "input" if has_params else "click"
+
+
+def normalize_step(text: str) -> str:
+    normalized = text or ""
+    normalized = re.sub(r'"[^"]*"', '""', normalized)
+    normalized = re.sub(r'<[^>]+>', '""', normalized)
+    normalized = ' '.join(normalized.split())
+    return normalized.lower()
 
 
 def buildContract(test_case: dict):
@@ -91,10 +147,21 @@ def buildContract(test_case: dict):
         regex_text = re.sub(r'"([^\"]+)"', '"(.*)"', text)
         interaction = detect_interaction(text, bool(params))
         base_name = to_camel(text)
+        normalized = normalize_step(regex_text)
+        shared = GLOBAL_STEP_REGISTRY.get(normalized)
+        if shared:
+            glue_class = shared['glue']
+            method_name = shared['method']
+            reuses_existing = True
+        else:
+            glue_class = f"com.autogen.steps.{class_base}Steps"
+            method_name = base_name or f"step{idx + 1}"
+            GLOBAL_STEP_REGISTRY[normalized] = {"glue": glue_class, "method": method_name}
+            reuses_existing = False
         contracts["stepDefinitions"].append({
             "stepText": regex_text,
-            "glueClass": f"com.autogen.steps.{class_base}Steps",
-            "methodName": f"step{idx + 1}",
+            "glueClass": glue_class,
+            "methodName": method_name,
             "parameters": [f"String param{i + 1}" for i in range(len(params))],
             "body": None,
             "action": {
@@ -102,10 +169,10 @@ def buildContract(test_case: dict):
                 "baseName": base_name,
                 "interaction": interaction
             },
-            "reusesExisting": False
+            "reusesExisting": reuses_existing
         })
         contracts["pageObjects"][0]["methods"].append({
             "name": base_name,
-            "locator": suggest_locator(text, idx)
+            "locator": suggest_locator(text, idx, test_case.get("url"))
         })
     return contracts

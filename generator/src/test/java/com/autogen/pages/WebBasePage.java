@@ -1,6 +1,7 @@
 package com.autogen.pages;
 
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -48,14 +49,28 @@ public abstract class WebBasePage {
         }
     }
 
-    protected void clickElement(WebElement element) {
-        waitUntilElementIsVisible(element);
+    protected void click(WebElement element) {
         element.click();
     }
 
-    protected void typeText(WebElement element, String text) {
-        waitUntilElementIsVisible(element);
+    protected void doubleClick(WebElement element) {
+        new Actions(driver).doubleClick(element).perform();
+    }
+
+    protected void hover(WebElement element) {
+        new Actions(driver).moveToElement(element).perform();
+    }
+
+    protected void scrollIntoView(WebElement element) {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+    }
+
+    protected void clear(WebElement element) {
         element.clear();
+    }
+
+    protected void sendKeys(WebElement element, String text) {
+        clear(element);
         element.sendKeys(text);
     }
 

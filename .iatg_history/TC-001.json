@@ -44,7 +44,7 @@
     {
       "stepText": "Ingresar usuario \"(.*)\"",
       "glueClass": "com.autogen.steps.LoginPositivoSteps",
-      "methodName": "step1",
+      "methodName": "ingresarUsuarioQaUser",
       "parameters": [
         "String param1"
       ],
@@ -59,7 +59,7 @@
     {
       "stepText": "Ingresar password \"(.*)\"",
       "glueClass": "com.autogen.steps.LoginPositivoSteps",
-      "methodName": "step2",
+      "methodName": "ingresarPassword1234",
       "parameters": [
         "String param1"
       ],
@@ -74,7 +74,7 @@
     {
       "stepText": "Presionar Ingresar",
       "glueClass": "com.autogen.steps.LoginPositivoSteps",
-      "methodName": "step3",
+      "methodName": "presionarIngresar",
       "parameters": [],
       "body": null,
       "action": {
@@ -87,7 +87,7 @@
     {
       "stepText": "Validar dashboard principal",
       "glueClass": "com.autogen.steps.LoginPositivoSteps",
-      "methodName": "step4",
+      "methodName": "validarDashboardPrincipal",
       "parameters": [],
       "body": null,
       "action": {

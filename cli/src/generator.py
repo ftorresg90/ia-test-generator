@@ -1,10 +1,6 @@
 from pathlib import Path
-
 import re
-
-import re
-
-import re
+from typing import Any, Dict, List, Tuple
 
 from .utils.strings import slugify, camel_case, extract_url
 
@@ -12,6 +8,79 @@ STEP_PACKAGE = 'com.autogen.steps'
 PAGE_PACKAGE = 'com.autogen.pages'
 HOOKS_PACKAGE = 'com.autogen.hooks'
 RUNNER_PACKAGE = 'com.autogen.runners'
+Contract = Dict[str, Any]
+
+
+def to_cucumber_expression(text: str) -> str:
+    if not text:
+        return ''
+    expr = re.sub(r'"[^"]*"', '{string}', text)
+    expr = re.sub(r'<[^>]+>', '{string}', expr)
+    expr = expr.replace('\\', '\\\\').replace('"', '\\"')
+    return expr
+
+
+PARAM_HINTS = [
+    (("url", "http", "https", "www.", "sitio", "pagina"), "url"),
+    (("usuario", "user", "correo", "email", "mail"), "usuario"),
+    (("password", "clave", "pass"), "password"),
+    (("buscar", "producto", "item", "articulo", "search"), "producto"),
+    (("mensaje", "texto"), "mensaje"),
+    (("codigo", "token"), "codigo"),
+    (("numero", "cantidad", "monto"), "valor"),
+]
+
+
+def guess_parameter_name(step_text: str, idx: int) -> str:
+    lower = (step_text or '').lower()
+    for keywords, name in PARAM_HINTS:
+        if any(keyword in lower for keyword in keywords):
+            return name
+    return f"valor{idx + 1}"
+
+
+def sanitize_identifier(name: str) -> str:
+    cleaned = re.sub(r'[^a-zA-Z0-9_]', '', name or '')
+    if not cleaned:
+        return 'value'
+    if cleaned[0].isdigit():
+        cleaned = f"v{cleaned}"
+    return cleaned
+
+
+def remove_parameter_literals(text: str) -> str:
+    if not text:
+        return ''
+    cleaned = re.sub(r'"[^"]*"', '', text)
+    cleaned = re.sub(r'<[^>]+>', '', cleaned)
+    return ' '.join(cleaned.split()).strip()
+
+
+def build_method_parameters(step, text):
+    raw_params = step.get('parameters', []) or []
+    if not raw_params:
+        return [], []
+    definitions = []
+    names = []
+    used = set()
+    for idx, declaration in enumerate(raw_params):
+        parts = declaration.split()
+        if len(parts) >= 2:
+            param_type = ' '.join(parts[:-1])
+        else:
+            param_type = 'String'
+        hint = guess_parameter_name(text, idx)
+        candidate = sanitize_identifier(hint)
+        base = candidate or f"value{idx + 1}"
+        name = base
+        counter = 1
+        while name in used:
+            name = f"{base}{counter}"
+            counter += 1
+        used.add(name)
+        names.append(name)
+        definitions.append(f"{param_type} {name}")
+    return definitions, names
 
 
 def compute_step_keywords(count: int):
@@ -75,14 +144,33 @@ def write_features(contracts, output_dir):
 
 ### Step Definitions
 
-def build_step_body(step, page_infos):
+NAVIGATION_KEYWORDS = (
+    "navegar",
+    "abrir",
+    "visitar",
+    "ir a",
+    "acceder",
+    "entrar",
+)
+
+
+def build_step_body(step, page_infos, param_names):
     action = step.get('action') or {}
     po_class = action.get('pageObjectClass')
     base_name = camel_case(action.get('baseName', 'element'))
-    params = [param.split()[-1] for param in step.get('parameters', [])]
+    params = param_names or []
+    step_text = step.get('_gherkin_text') or step.get('stepText') or ''
+    text_lower = (step_text or '').lower()
+    if url := extract_url(step_text):
+        param = params[0] if params else None
+        value = param or f"\"{url}\""
+        return f"driver.get({value});"
+    if any(keyword in text_lower for keyword in NAVIGATION_KEYWORDS):
+        target_url = step.get('_meta_url')
+        if target_url:
+            return f'driver.get("{target_url}");'
     if not po_class:
-        url = extract_url(step.get('stepText', ''))
-        return f'driver.get("{url}");' if url else '// TODO'
+        return '// TODO'
     target = next((info for info in page_infos if info['fqcn'] == po_class), None)
     if not target:
         return '// TODO'
@@ -105,28 +193,35 @@ def normalize_step_text(text: str) -> str:
     return normalized.lower()
 
 
-def build_keyword_map(contract):
-    mapping = {}
+def build_step_metadata(contract):
+    keyword_map = {}
+    text_map = {}
     for scenario in contract.get('gherkin', {}).get('scenarios', []):
         steps = scenario.get('steps', [])
         keyword_flow = compute_step_keywords(len(steps))
         for idx, step in enumerate(steps):
-            normalized = normalize_step_text(step.get('text', ''))
+            text = step.get('text', '')
+            normalized = normalize_step_text(text)
             keyword = keyword_flow[idx] if idx < len(keyword_flow) else step.get('keyword', 'When')
-            mapping.setdefault(normalized, keyword)
-    return mapping
+            keyword_map.setdefault(normalized, keyword)
+            text_map.setdefault(normalized, []).append(text)
+    return keyword_map, text_map
 
 
 def collect_glue_data(contracts):
     glue_map = {}
     for contract in contracts:
-        keyword_map = build_keyword_map(contract)
+        keyword_map, text_map = build_step_metadata(contract)
+        meta_url = contract.get('meta', {}).get('url')
         for step in contract.get('stepDefinitions', []):
             glue = step.get('glueClass') or STEP_PACKAGE
             entry = glue_map.setdefault(glue, {'steps': [], 'pages': set()})
             enriched = dict(step)
             normalized = normalize_step_text(step.get('stepText'))
             enriched['_keyword'] = keyword_map.get(normalized, 'When')
+            enriched['_meta_url'] = meta_url
+            texts = text_map.get(normalized) or []
+            enriched['_gherkin_text'] = texts.pop(0) if texts else step.get('stepText')
             entry['steps'].append(enriched)
             po_class = step.get('action', {}).get('pageObjectClass')
             if po_class:
@@ -162,19 +257,27 @@ def write_step_classes(contracts, output_dir):
         methods = []
         for idx, step in enumerate(data['steps']):
             annotation = (step.get('_keyword') or 'When').capitalize()
-            text = step.get('stepText') or ''
-            params = ', '.join(step.get('parameters', []))
-            body = build_step_body(step, page_infos)
-            base_name = camel_case(text or f"step{idx + 1}") or f"step{idx + 1}"
-            name_candidate = base_name
+            text = step.get('_gherkin_text') or step.get('stepText') or ''
+            expression = to_cucumber_expression(text)
+            param_defs, param_names = build_method_parameters(step, text)
+            params = ', '.join(param_defs)
+            body = build_step_body(step, page_infos, param_names)
+            cleaned_text = remove_parameter_literals(text) or text
+            base_name = camel_case(cleaned_text or f"step{idx + 1}") or f"step{idx + 1}"
+            reuse_existing = step.get('reusesExisting')
+            preferred = step.get('methodName') if reuse_existing else None
+            if not preferred:
+                preferred = base_name
+            name_candidate = preferred
             counter = 1
+            if preferred in method_names and step.get('methodName'):
+                continue
             while name_candidate in method_names:
-                name_candidate = f"{base_name}{counter}"
+                name_candidate = f"{preferred}{counter}"
                 counter += 1
             method_names.add(name_candidate)
-            escaped = text.replace('\\', '\\\\').replace('"', '\\"')
-            method_lines = [f"    @{annotation}(\"{escaped}\")",
-                            f"    public void {name_candidate}({params}) {{",
+            method_lines = [f"    @{annotation}(\"{expression}\")",
+                            f"    public void {name_candidate}({params}) {{" if params else f"    public void {name_candidate}() {{",
                             indent(body if body else '// TODO'),
                             '    }']
             methods.append('\n'.join(method_lines))
@@ -224,10 +327,10 @@ def build_element_blocks(methods):
         annotation = render_find_by(method.get('locator'), name, idx)
         field_line = f"    {annotation}\n    private WebElement {field_name};"
         actions = [
-            f"    public void {field_name}Click() {{\n        clickElement({field_name});\n    }}",
-            f"    public void {field_name}SendKeys(String text) {{\n        typeText({field_name}, text);\n    }}",
-            f"    public boolean {field_name}IsVisible() {{\n        return isVisible({field_name});\n    }}",
-            f"    public String {field_name}GetText() {{\n        return getText({field_name});\n    }}",
+            f"    public void {field_name}Click() {{\n        waitUntilElementIsVisible({field_name});\n        click({field_name});\n    }}",
+            f"    public void {field_name}SendKeys(String text) {{\n        waitUntilElementIsVisible({field_name});\n        sendKeys({field_name}, text);\n    }}",
+            f"    public boolean {field_name}IsVisible() {{\n        waitUntilElementIsVisibleNonThrow({field_name}, 5);\n        return isVisible({field_name});\n    }}",
+            f"    public String {field_name}GetText() {{\n        waitUntilElementIsVisible({field_name});\n        return getText({field_name});\n    }}",
         ]
         blocks.append({'field': field_line, 'actions': '\n\n'.join(actions)})
     return blocks
@@ -244,8 +347,10 @@ def write_page_objects(contracts, output_dir):
             dir_path.mkdir(parents=True, exist_ok=True)
             blocks = build_element_blocks(po.get('methods'))
             class_lines = [f"package {package};", '',
-                           'import org.openqa.selenium.WebDriver;',
-                           'import org.openqa.selenium.WebElement;',
+             'import org.openqa.selenium.WebDriver;',
+             'import org.openqa.selenium.WebElement;',
+             'import org.openqa.selenium.interactions.Actions;',
+             'import org.openqa.selenium.JavascriptExecutor;',
                            'import org.openqa.selenium.support.FindBy;',
                            'import org.openqa.selenium.support.PageFactory;',
                            '',
@@ -275,6 +380,7 @@ def write_base_page(output_dir):
     dir_path = Path(output_dir) / 'test/java' / '/'.join(PAGE_PACKAGE.split('.'))
     lines = [f"package {PAGE_PACKAGE};", '',
              'import org.openqa.selenium.*;',
+             'import org.openqa.selenium.interactions.Actions;',
              'import org.openqa.selenium.support.ui.ExpectedConditions;',
              'import org.openqa.selenium.support.ui.WebDriverWait;',
              '',
@@ -322,14 +428,28 @@ def write_base_page(output_dir):
              '        }',
              '    }',
              '',
-             '    protected void clickElement(WebElement element) {',
-             '        waitUntilElementIsVisible(element);',
+             '    protected void click(WebElement element) {',
              '        element.click();',
              '    }',
              '',
-             '    protected void typeText(WebElement element, String text) {',
-             '        waitUntilElementIsVisible(element);',
+             '    protected void doubleClick(WebElement element) {',
+             '        new Actions(driver).doubleClick(element).perform();',
+             '    }',
+             '',
+             '    protected void hover(WebElement element) {',
+             '        new Actions(driver).moveToElement(element).perform();',
+             '    }',
+             '',
+             '    protected void scrollIntoView(WebElement element) {',
+             '        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);',
+             '    }',
+             '',
+             '    protected void clear(WebElement element) {',
              '        element.clear();',
+             '    }',
+             '',
+             '    protected void sendKeys(WebElement element, String text) {',
+             '        clear(element);',
              '        element.sendKeys(text);',
              '    }',
              '',
@@ -416,7 +536,7 @@ def write_runner(output_dir):
              '',
              '@RunWith(Cucumber.class)',
              '@CucumberOptions(',
-             '        features = "src/test/resources/features",',
+             '        features = "generator/src/test/resources/features",',
              f'        glue = {{"{STEP_PACKAGE}", "{HOOKS_PACKAGE}"}},',
              '        plugin = "pretty",',
              '        monochrome = true',
@@ -434,3 +554,4 @@ def generate_artifacts(contracts, output_dir):
     write_base_page(output_dir)
     write_hooks(output_dir)
     write_runner(output_dir)
+from .utils.strings import camel_case, extract_url, slugify
